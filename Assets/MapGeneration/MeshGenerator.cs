@@ -13,6 +13,8 @@ public class MeshGenerator : MonoBehaviour {
 	[SerializeField]
 	[Range(1,3)]
 	private int wallMeshSubdivision = 3;
+	[SerializeField]
+	private bool drawGizmos = false;
 
 	List<Vector3> vertices;
 	List<int> triangles;
@@ -47,11 +49,13 @@ public class MeshGenerator : MonoBehaviour {
 		float xPermValue = (float)(pseudoRandom.NextDouble() * (0.08f-0.04f) + 0.04f);
 		float zPermValue = (float)(pseudoRandom.NextDouble() * (0.08f-0.04f) + 0.04f);
 
+		
 		for(int i = 0; i < vertices.Count; i++){
 			float y = Mathf.Floor(Mathf.PerlinNoise(vertices[i].x * xPermValue,vertices[i].z * zPermValue)*permValue);
 			Vector3 newVertex = new Vector3(vertices[i].x,y,vertices[i].z);
 			vertices[i] = newVertex;
 		}
+		
 
 		mesh.vertices = vertices.ToArray();
 		mesh.triangles = triangles.ToArray();
@@ -118,6 +122,7 @@ public class MeshGenerator : MonoBehaviour {
 				}
 			}
 		}
+
 		wallMesh.vertices = wallVertices.ToArray ();
 		wallMesh.triangles = wallTriangles.ToArray ();
 		walls.mesh = wallMesh;
@@ -403,5 +408,36 @@ public class MeshGenerator : MonoBehaviour {
 			right = new Node(position + Vector3.right * squareSize/2f);
 		}
 
+	}
+
+	void OnDrawGizmos() {
+		if(drawGizmos){
+			if (squareGrid != null) {
+			for (int x = 0; x < squareGrid.squares.GetLength(0); x ++) {
+				for (int y = 0; y < squareGrid.squares.GetLength(1); y ++) {
+
+					Gizmos.color = (squareGrid.squares[x,y].topLeft.active)?Color.black:Color.white;
+					Gizmos.DrawCube(squareGrid.squares[x,y].topLeft.position, Vector3.one * .4f);
+
+					Gizmos.color = (squareGrid.squares[x,y].topRight.active)?Color.black:Color.white;
+					Gizmos.DrawCube(squareGrid.squares[x,y].topRight.position, Vector3.one * .4f);
+
+					Gizmos.color = (squareGrid.squares[x,y].bottomRight.active)?Color.black:Color.white;
+					Gizmos.DrawCube(squareGrid.squares[x,y].bottomRight.position, Vector3.one * .4f);
+
+					Gizmos.color = (squareGrid.squares[x,y].bottomLeft.active)?Color.black:Color.white;
+					Gizmos.DrawCube(squareGrid.squares[x,y].bottomLeft.position, Vector3.one * .4f);
+
+
+					Gizmos.color = Color.grey;
+					Gizmos.DrawCube(squareGrid.squares[x,y].centreTop.position, Vector3.one * .15f);
+					Gizmos.DrawCube(squareGrid.squares[x,y].centreRight.position, Vector3.one * .15f);
+					Gizmos.DrawCube(squareGrid.squares[x,y].centreBottom.position, Vector3.one * .15f);
+					Gizmos.DrawCube(squareGrid.squares[x,y].centreLeft.position, Vector3.one * .15f);
+
+				}
+			}
+		}
+		}
 	}
 }

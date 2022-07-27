@@ -33,6 +33,8 @@ public class MapGenerator : MonoBehaviour
 	[SerializeField]
 	[Range(0.1f,5f)]
 	private float gridSize = 1;
+	[SerializeField]
+    private bool drawGizmos = false;
 
     int[,] map;
 	private int wallThreshhold = 4;
@@ -47,7 +49,7 @@ public class MapGenerator : MonoBehaviour
 		}
 	}
 
-	void GenerateMap() {
+	public void GenerateMap() {
 		map = new int[width,height];
 		RandomFillMap();
 
@@ -416,5 +418,18 @@ public class MapGenerator : MonoBehaviour
             }
         }
 	}
-
+	
+	void OnDrawGizmos() {
+		if(drawGizmos){
+			if (map != null) {
+				for (int x = 0; x < width; x ++) {
+					for (int y = 0; y < height; y ++) {
+						Gizmos.color = (map[x,y] == 1)?Color.black:Color.white;
+						Vector3 pos = new Vector3(-width/2 + x + .5f,0, -height/2 + y+.5f);
+						Gizmos.DrawCube(pos,Vector3.one);
+					}
+				}
+			}
+		}
+	}
 }
